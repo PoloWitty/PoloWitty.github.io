@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Classification &amp;#x4F7F;&amp;#x7528;mnist&amp;#x6570;&amp;#x636E;&amp;#x96C6;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Classification">
+<meta property="og:url" content="http://example.com/handon-ml2/notebook-handon-ml2-Classification/index.html">
+<meta property="og:site_name" content="Paolo">
+<meta property="og:description" content="Classification &amp;#x4F7F;&amp;#x7528;mnist&amp;#x6570;&amp;#x636E;&amp;#x96C6;">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-04-24T15:44:17.000Z">
+<meta property="article:modified_time" content="2021-04-24T15:52:12.437Z">
+<meta property="article:author" content="PaoloWitty">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/handon-ml2/notebook-handon-ml2-Classification/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Classification | Paolo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Paolo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/handon-ml2/notebook-handon-ml2-Classification/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="PaoloWitty">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Paolo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Classification
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-04-24 23:44:17 / 修改时间：23:52:12" itemprop="dateCreated datePublished" datetime="2021-04-24T23:44:17+08:00">2021-04-24</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/handon-ml2/" itemprop="url" rel="index"><span itemprop="name">handon-ml2</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Classification"><a href="#Classification" class="headerlink" title="Classification"></a>Classification</h1><blockquote>
+<p>&#x4F7F;&#x7528;<em>mnist</em>&#x6570;&#x636E;&#x96C6;</p>
+</blockquote>
+<span id="more"></span>
+
+<h2 id="Binary-classifier"><a href="#Binary-classifier" class="headerlink" title="Binary classifier"></a>Binary classifier</h2><h3 id="&#x51C6;&#x5907;&#x6570;&#x636E;"><a href="#&#x51C6;&#x5907;&#x6570;&#x636E;" class="headerlink" title="&#x51C6;&#x5907;&#x6570;&#x636E;"></a>&#x51C6;&#x5907;&#x6570;&#x636E;</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">y_train_5 = (y_train == <span class="number">5</span>)</span><br><span class="line">y_test_5 = (y_test == <span class="number">5</span>)</span><br><span class="line"><span class="comment">#X_train&#x4E0D;&#x7528;&#x5904;&#x7406;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="&#x7EC3;&#x6A21;&#x578B;-&#x4F5C;&#x9884;&#x6D4B;"><a href="#&#x7EC3;&#x6A21;&#x578B;-&#x4F5C;&#x9884;&#x6D4B;" class="headerlink" title="&#x7EC3;&#x6A21;&#x578B;,&#x4F5C;&#x9884;&#x6D4B;"></a>&#x7EC3;&#x6A21;&#x578B;,&#x4F5C;&#x9884;&#x6D4B;</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> SGDClassifier</span><br><span class="line">sgd_clf=SGDClassifier(max_iter=<span class="number">1000</span>,tol=<span class="number">1e-3</span>)</span><br><span class="line">sgd_clf.fit(X_train,y_train_5)</span><br><span class="line">sgd_clf.predict(X[<span class="number">0</span>,:])</span><br></pre></td></tr></table></figure>
+
+<h3 id="Performance-Measures"><a href="#Performance-Measures" class="headerlink" title="Performance Measures"></a>Performance Measures</h3><h4 id="Measuring-Accuracy-Using-Cross-Validation"><a href="#Measuring-Accuracy-Using-Cross-Validation" class="headerlink" title="Measuring Accuracy Using Cross-Validation"></a>Measuring Accuracy Using Cross-Validation</h4><ul>
+<li><p>Using sklearn&#x2019;s cross_val_score function:</p>
+<ul>
+<li>``` python<br>from sklearn.model_selection import cross_val_score<br>cross_val_score(sgd_clf, X_train, y_train_5, cv=3, scoring=&#x201D;accuracy&#x201D;)<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- To get more control over the cv process, self implement cv:</span><br><span class="line"></span><br><span class="line">  - ``` python</span><br><span class="line">    from sklearn.model_selection import StratifiedKFold</span><br><span class="line">    from sklearn.base import clone</span><br><span class="line">    </span><br><span class="line">    skfolds = StratifiedKFold(n_splits=3,shuffle=True)</span><br><span class="line">    </span><br><span class="line">    for train_index,test_index in skfolds.split(X_train,y_train_5):</span><br><span class="line">        clone_clf = clone(sgd_clf)</span><br><span class="line">        X_train_folds=X_train[train_index]</span><br><span class="line">        y_train_folds=y_train_5[test_index]</span><br><span class="line">        X_test_fold=X_train[test_index]</span><br><span class="line">        y_test_fold=y_train_5[test_index]</span><br><span class="line">        </span><br><span class="line">        clone_clf.fit(X_train_folds,y_train_folds)</span><br><span class="line">        y_pred=clone_clf.predict(X_test_fold)</span><br><span class="line">        n_correct=sum(y_pred==y_test_fold)</span><br><span class="line">        print(&apos;accuracy:&apos;+str(n_correct/len(y_pred)))</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>Validate the data skewed by predicting all the input as False:</p>
+<ul>
+<li>```python<br>from sklearn.base import BaseEstimator<br>class Never5Classifier(BaseEstimator):<pre><code>def fit(self,X,y=None):
+    pass
+def predict(self,X):
+    return np.zeros((len(X),1),dtype=bool)
+</code></pre>
+never_5_clf=Never5Classifier()<br>cross_val_score(never_5_clf,X_train,y_train_5,cv=3,scoring=&#x2019;accuracy&#x2019;)<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#### Confusion Matrix</span><br><span class="line"></span><br><span class="line">use the confusion matrix to solve the skewed data problem</span><br><span class="line"></span><br><span class="line">first, make prediction:</span><br><span class="line"></span><br><span class="line">```python</span><br><span class="line">from sklearn.model_selection import cross_val_predict</span><br><span class="line"></span><br><span class="line">y_train_pred=cross_val_predict(sgd_clf,X_train,y_train_5,cv=3)</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<p><em>cross_val_predict</em> function performs K-fold cross-validation, it returns the predictions made on each validation fold. Attention, the prediction for each instance is made by a model that never saw the data during training, so the prediction is called clean prediction. It seems OK to treat this just the method of separate the data set as train_data, validation_data and test_data.</p>
+<p>second, get the confusion matrix:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> confusion_matrix</span><br><span class="line">confusion_matrix(y_train_5,y_train_pred)</span><br><span class="line"><span class="comment"># the actual label is always the first one, the predict label is the second one</span></span><br></pre></td></tr></table></figure>
+
+<p> the format of output is :<br>$$<br>\begin{matrix}<br>TN &amp; FP\<br>FN &amp; TP<br>\end{matrix}<br>$$<br>Note that no-5 is negative here, each row  represent an actual class, each column represent a predict class</p>
+<p>compute the Precision and Recall:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> precision_score,recall_score</span><br><span class="line">precision_score(y_train_5,y_train_pred)</span><br><span class="line">recall_score(y_train_5,y_train_pred)</span><br></pre></td></tr></table></figure>
+
+<p>compute the F1 score:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> f1_score</span><br><span class="line">f1_score(y_train_5,y_train_pred)</span><br></pre></td></tr></table></figure>
+
+<p>$$<br>F1=\frac2{\frac1{precision}+\frac1{recall}}<br>$$</p>
+<h4 id="Precision-Recall-Trade-off"><a href="#Precision-Recall-Trade-off" class="headerlink" title="Precision/Recall Trade-off"></a>Precision/Recall Trade-off</h4><p>here we just consider the affect of decision function&#x2019;s threshold. (such the 0 of sigmoid function)</p>
+<p>preview: we can get the score without mapping the output to True/False by:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">y_scores=sgd_clf.decision_function([X[<span class="number">0</span>]])</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><p>use the <em>cross_val_predict</em> function to get the scores of all instances in the training set(the scores without mapping the output to True/False)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">y_scores = cross_val_predict(sgd_clf,X_train,y_train_5,cv=<span class="number">3</span>,method=<span class="string">&apos;decision_function&apos;</span>)</span><br></pre></td></tr></table></figure></li>
+<li><p>use the <em>precision_recall_curve</em> function to compute precision and recall for all possible thresholds:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> precision_recall_curve</span><br><span class="line"></span><br><span class="line">precisions,recalls,thresholds = precision_recall_curve(y_train_5,y_scores)</span><br></pre></td></tr></table></figure></li>
+<li><p>use Matplotlib to plot precision and recall as functions of the threshold value:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">plot_precision_recall_vs_threshold</span>(<span class="params">precisions, recalls, thresholds</span>):</span></span><br><span class="line">    plt.plot(thresholds, precisions[:-<span class="number">1</span>], <span class="string">&quot;b--&quot;</span>, label=<span class="string">&quot;Precision&quot;</span>, linewidth=<span class="number">2</span>)</span><br><span class="line">    plt.plot(thresholds, recalls[:-<span class="number">1</span>], <span class="string">&quot;g-&quot;</span>, label=<span class="string">&quot;Recall&quot;</span>, linewidth=<span class="number">2</span>)</span><br><span class="line">    plt.legend(loc=<span class="string">&quot;center right&quot;</span>, fontsize=<span class="number">16</span>) <span class="comment"># Not shown in the book</span></span><br><span class="line">    plt.xlabel(<span class="string">&quot;Threshold&quot;</span>, fontsize=<span class="number">16</span>)        <span class="comment"># Not shown</span></span><br><span class="line">    plt.grid(<span class="literal">True</span>)                              <span class="comment"># Not shown</span></span><br><span class="line">    plt.axis([-<span class="number">50000</span>, <span class="number">50000</span>, <span class="number">0</span>, <span class="number">1</span>])             <span class="comment"># Not shown</span></span><br><span class="line"></span><br><span class="line">recall_90_precision = recalls[np.argmax(precisions &gt;= <span class="number">0.90</span>)]</span><br><span class="line">threshold_90_precision = thresholds[np.argmax(precisions &gt;= <span class="number">0.90</span>)]</span><br><span class="line"></span><br><span class="line">plt.figure(figsize=(<span class="number">8</span>, <span class="number">4</span>))                                                                  <span class="comment"># Not shown</span></span><br><span class="line">plot_precision_recall_vs_threshold(precisions, recalls, thresholds)</span><br><span class="line">plt.plot([threshold_90_precision, threshold_90_precision], [<span class="number">0.</span>, <span class="number">0.9</span>], <span class="string">&quot;r:&quot;</span>)                 <span class="comment"># Not shown</span></span><br><span class="line">plt.plot([-<span class="number">50000</span>, threshold_90_precision], [<span class="number">0.9</span>, <span class="number">0.9</span>], <span class="string">&quot;r:&quot;</span>)                                <span class="comment"># Not shown</span></span><br><span class="line">plt.plot([-<span class="number">50000</span>, threshold_90_precision], [recall_90_precision, recall_90_precision], <span class="string">&quot;r:&quot;</span>)<span class="comment"># Not shown</span></span><br><span class="line">plt.plot([threshold_90_precision], [<span class="number">0.9</span>], <span class="string">&quot;ro&quot;</span>)                                             <span class="comment"># Not shown</span></span><br><span class="line">plt.plot([threshold_90_precision], [recall_90_precision], <span class="string">&quot;ro&quot;</span>)                             <span class="comment"># Not shown</span></span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<p>we can also directly plot precision vs recall:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">plot_precision_vs_recall</span>(<span class="params">precisions, recalls</span>):</span></span><br><span class="line">    plt.plot(recalls, precisions, <span class="string">&quot;b-&quot;</span>, linewidth=<span class="number">2</span>)</span><br><span class="line">    plt.xlabel(<span class="string">&quot;Recall&quot;</span>, fontsize=<span class="number">16</span>)</span><br><span class="line">    plt.ylabel(<span class="string">&quot;Precision&quot;</span>, fontsize=<span class="number">16</span>)</span><br><span class="line">    plt.axis([<span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">1</span>])</span><br><span class="line">    plt.grid(<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">plt.figure(figsize=(<span class="number">8</span>, <span class="number">6</span>))</span><br><span class="line">plot_precision_vs_recall(precisions, recalls)</span><br><span class="line">plt.plot([recall_90_precision, recall_90_precision], [<span class="number">0.</span>, <span class="number">0.9</span>], <span class="string">&quot;r:&quot;</span>)</span><br><span class="line">plt.plot([<span class="number">0.0</span>, recall_90_precision], [<span class="number">0.9</span>, <span class="number">0.9</span>], <span class="string">&quot;r:&quot;</span>)</span><br><span class="line">plt.plot([recall_90_precision], [<span class="number">0.9</span>], <span class="string">&quot;ro&quot;</span>)</span><br><span class="line">save_fig(<span class="string">&quot;precision_vs_recall_plot&quot;</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>We can get the threshold we want by using <em>np.argmax()</em> (it will give the first index of the maximum value), so we can use it like this:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">threshold_90_precision=thresholds[np.argmax(precision&gt;=<span class="number">0.9</span>)]</span><br></pre></td></tr></table></figure>
+
+<p>so we can get the prediction using the threshold we found:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">y_trian_pred = (y_scores&gt;=threshold_90_precision)</span><br></pre></td></tr></table></figure>
+
+<h4 id="ROC-Curve"><a href="#ROC-Curve" class="headerlink" title="ROC Curve"></a>ROC Curve</h4><blockquote>
+<p> ROC: Receiver operating characteristic</p>
+<p> the ROC curve is TPR vs. FPR(false positive rate) </p>
+</blockquote>
+<ol>
+<li><p>use the <em>roc_curve</em> function to compute the TPR and FPR:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> roc_curve</span><br><span class="line"></span><br><span class="line">fpr,tpr,thresholds = roc_curve(y_trian_5,y_scores)</span><br></pre></td></tr></table></figure></li>
+<li><p>plot FPR against TPR using Matplotlib</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">plot_roc_curve</span>(<span class="params">fpr, tpr, label=<span class="literal">None</span></span>):</span></span><br><span class="line">    plt.plot(fpr, tpr, linewidth=<span class="number">2</span>, label=label)</span><br><span class="line"> plt.plot([<span class="number">0</span>, <span class="number">1</span>], [<span class="number">0</span>, <span class="number">1</span>], <span class="string">&apos;k--&apos;</span>) <span class="comment"># dashed diagonal</span></span><br><span class="line">    plt.axis([<span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">1</span>])                                    <span class="comment"># Not shown in the book</span></span><br><span class="line">    plt.xlabel(<span class="string">&apos;False Positive Rate (Fall-Out)&apos;</span>, fontsize=<span class="number">16</span>) <span class="comment"># Not shown</span></span><br><span class="line">    plt.ylabel(<span class="string">&apos;True Positive Rate (Recall)&apos;</span>, fontsize=<span class="number">16</span>)    <span class="comment"># Not shown</span></span><br><span class="line">    plt.grid(<span class="literal">True</span>)                                            <span class="comment"># Not shown</span></span><br><span class="line"></span><br><span class="line">plt.figure(figsize=(<span class="number">8</span>, <span class="number">6</span>))                                    <span class="comment"># Not shown</span></span><br><span class="line">plot_roc_curve(fpr, tpr)</span><br><span class="line">fpr_90 = fpr[np.argmax(tpr &gt;= recall_90_precision)]           <span class="comment"># Not shown</span></span><br><span class="line">plt.plot([fpr_90, fpr_90], [<span class="number">0.</span>, recall_90_precision], <span class="string">&quot;r:&quot;</span>)   <span class="comment"># Not shown</span></span><br><span class="line">plt.plot([<span class="number">0.0</span>, fpr_90], [recall_90_precision, recall_90_precision], <span class="string">&quot;r:&quot;</span>)  <span class="comment"># Not shown</span></span><br><span class="line">plt.plot([fpr_90], [recall_90_precision], <span class="string">&quot;ro&quot;</span>)               <span class="comment"># Not shown</span></span><br><span class="line">save_fig(<span class="string">&quot;roc_curve_plot&quot;</span>)                                    <span class="comment"># Not shown</span></span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>the dotted black line represent the ROC curve of a purely random classifier; a good classifier should stay as far away from that line as possible.</p>
+<blockquote>
+<p>AUC: area under the curve</p>
+<p>one way to compare classifier.</p>
+<p>A perfect classifier will have a ROC AUC equal to 1, whereas a purely random classifier will have a ROC AUC equal to 0.5.</p>
+</blockquote>
+<p>we can compute ROC AUC like this:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> roc_auc_score</span><br><span class="line">roc_auc_score(y_train_5,y_scores)</span><br></pre></td></tr></table></figure>
+
+<h4 id="&#x5173;&#x4E8E;&#x8BC4;&#x4EF7;&#x6307;&#x6807;&#x9009;ROC-AUC&#x8FD8;&#x662F;Precision-Recall-Curve"><a href="#&#x5173;&#x4E8E;&#x8BC4;&#x4EF7;&#x6307;&#x6807;&#x9009;ROC-AUC&#x8FD8;&#x662F;Precision-Recall-Curve" class="headerlink" title="&#x5173;&#x4E8E;&#x8BC4;&#x4EF7;&#x6307;&#x6807;&#x9009;ROC AUC&#x8FD8;&#x662F;Precision/Recall Curve"></a>&#x5173;&#x4E8E;&#x8BC4;&#x4EF7;&#x6307;&#x6807;&#x9009;ROC AUC&#x8FD8;&#x662F;Precision/Recall Curve</h4><p> &#x4E2A;&#x4EBA;&#x7406;&#x89E3;:</p>
+<ul>
+<li>&#x50CF;&#x764C;&#x75C7;&#x68C0;&#x6D4B;&#x91CC;,&#x8981;&#x786E;&#x4FDD;&#x6BCF;&#x4E00;&#x4E2A;&#x88AB;&#x8BCA;&#x65AD;&#x4E3A;&#x764C;&#x75C7;&#x7684;&#x60A3;&#x8005;&#x771F;&#x7684;&#x90FD;&#x662F;&#x60A3;&#x4E86;&#x764C;&#x75C7;&#x7684;&#x60C5;&#x51B5;&#x65F6;,&#x5C31;&#x7528;ROC AUC&#x4F5C;&#x4E3A;&#x8861;&#x91CF;&#x6307;&#x6807;</li>
+<li>&#x50CF;&#x627E;&#x6076;&#x4EBA;,&#x5B81;&#x53EF;&#x9519;&#x6740;&#x597D;&#x4EBA;,&#x7EDD;&#x4E0D;&#x653E;&#x6389;&#x4E00;&#x4E2A;&#x574F;&#x4EBA;&#x7684;&#x60C5;&#x51B5;&#x65F6;,&#x5C31;&#x7528;Precision/Recall Curve</li>
+</ul>
+<h2 id="Multiclass-Classification"><a href="#Multiclass-Classification" class="headerlink" title="Multiclass Classification"></a>Multiclass Classification</h2><p>Some algorithms (such as SGD classifiers, Random Forest classifiers, and naive Bayes classifiers) are capable of handling multiple classes natively. Others (such as Logistic Regression or SVM classifiers) are strictly binary classifiers.</p>
+<p>There are typically two ways to perform multiclass classification with multiple binary classifiers.</p>
+<h3 id="OvR-and-OvO-strategy"><a href="#OvR-and-OvO-strategy" class="headerlink" title="OvR and OvO strategy"></a>OvR and OvO strategy</h3><h4 id="OvR"><a href="#OvR" class="headerlink" title="OvR"></a>OvR</h4><blockquote>
+<p>one-versus-the-rest (also called one-versus-all)</p>
+</blockquote>
+<p>train $N$ classifiers ($N$ is the number of classes), one for each class. When you  want to classify a class, you get the decision score from each classifier and select the class whose classifier outputs the highest score.</p>
+<h4 id="OvO"><a href="#OvO" class="headerlink" title="OvO"></a>OvO</h4><blockquote>
+<p>one-versus-one</p>
+</blockquote>
+<p>train a binary classifier for every pair of classes (for example, in this digits classifier problem, it can be one to distinguish 0s and 1s, another to distinguish 0s and 2s&#x2026;&#x2026;)</p>
+<p>If there are $N$ classes, you need to train $N * (N-1)/2$ classifiers. </p>
+<p>The main advantage of OvO is that each classifier only needs to be trained on the part of the training set for the two classes that it must distinguish.</p>
+<h4 id="the-choice-between-OvR-and-OvO"><a href="#the-choice-between-OvR-and-OvO" class="headerlink" title="the choice between OvR and OvO"></a>the choice between OvR and OvO</h4><p>Some algorithm (such as SVM) scale poorly with the size of the training set. So it&#x2019;s more faster to train many classifiers on small training sets than to train few classifiers on large training sets. So OvO is preferred for those algorighm. Otherwise, OvR is preferred.</p>
+<p>Scikit-learn will automatically run OvR or OvO depending on the algorithm.</p>
+<p>In order to force Scikit-learn to use OvR or OvO, you can use <em>OneVsOneClassifier</em> or <em>OneVsRestClassifier</em> classes:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.multiclass <span class="keyword">import</span> OneVsRestClassifier</span><br><span class="line">ovr_clf=OneVsRestClassifier(SVC(gamma=<span class="string">&apos;auto&apos;</span>))</span><br><span class="line">ovr_clf.fit(X_train,y_train)</span><br><span class="line">ovr_clf.predict([X[<span class="number">0</span>]])</span><br></pre></td></tr></table></figure>
+
+<p><em><strong>Implement Note</strong></em></p>
+<p><strong>ovr_clf.estimators_</strong> attr can access the classifiers for each class</p>
+<p><strong>ovr_clf.classes_</strong> attr can access the classes of the <em>ovr_clf</em> try to classificate</p>
+<h3 id="Error-Analysis"><a href="#Error-Analysis" class="headerlink" title="Error Analysis"></a>Error Analysis</h3><p>The confusion matrix can be computed as:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> plot_confusion_matrix</span><br><span class="line">plot_confusion_matrix(sgd_clf,X_train,y_train)</span><br></pre></td></tr></table></figure>
+
+<p>or self implement it and use it to focus on the errors:</p>
+<ol>
+<li><p>get the confusion matirx just like <em>plot_confusion_matrix</em></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">y_train_pred=cross_val_predict(sgd_clf,X_train,y_train,cv=<span class="number">3</span>)</span><br><span class="line">conf_mx=confusion_matrix(y_train,y_train_pred)</span><br><span class="line">plt.matshow(conf_mx,cmap=plt.cm.gray)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure></li>
+<li><p>normalize it</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">row_sums=conf_mx.<span class="built_in">sum</span>(axis=<span class="number">1</span>,keepdims=<span class="literal">True</span>)</span><br><span class="line">norm_conf_mx=conf_mx/row_sums</span><br></pre></td></tr></table></figure></li>
+<li><p>fill the diagonal with zeros to keep only the errors</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">np.fill_diagonal(norm_conf_mx,<span class="number">0</span>)</span><br><span class="line">plt.matshow(norm_conf_mx,cmap=plt.cm.gray)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="Multilabel-Classsification"><a href="#Multilabel-Classsification" class="headerlink" title="Multilabel Classsification"></a>Multilabel Classsification</h2><blockquote>
+<p>Multilabel classification: output multiple binary tags such as [1,0,1]</p>
+</blockquote>
+<p>KNN can handle this.</p>
+<h2 id="Multioutput-Classification"><a href="#Multioutput-Classification" class="headerlink" title="Multioutput Classification"></a>Multioutput Classification</h2><blockquote>
+<p>a generalization of multilabel classification where each label can be multiclass</p>
+</blockquote>
+<p> a simple example can be the background noise filiter, take an image as input , output an image (because every pixel can be seen as a label, and every label can have lot of values, pixel intensity ranges from 0 to 255)</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/handon-ml2/notebook-handon-ml2-Clustering-Anomaly-Detection/" rel="prev" title="Clustering & Anomaly Detection">
+      <i class="fa fa-chevron-left"></i> Clustering & Anomaly Detection
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/test/demo-site-test/" rel="next" title="my site test">
+      my site test <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Classification"><span class="nav-number">1.</span> <span class="nav-text">Classification</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Binary-classifier"><span class="nav-number">1.1.</span> <span class="nav-text">Binary classifier</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#&#x51C6;&#x5907;&#x6570;&#x636E;"><span class="nav-number">1.1.1.</span> <span class="nav-text">&amp;#x51C6;&amp;#x5907;&amp;#x6570;&amp;#x636E;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#&#x7EC3;&#x6A21;&#x578B;-&#x4F5C;&#x9884;&#x6D4B;"><span class="nav-number">1.1.2.</span> <span class="nav-text">&amp;#x7EC3;&amp;#x6A21;&amp;#x578B;,&amp;#x4F5C;&amp;#x9884;&amp;#x6D4B;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Performance-Measures"><span class="nav-number">1.1.3.</span> <span class="nav-text">Performance Measures</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Measuring-Accuracy-Using-Cross-Validation"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">Measuring Accuracy Using Cross-Validation</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Precision-Recall-Trade-off"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">Precision&#x2F;Recall Trade-off</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ROC-Curve"><span class="nav-number">1.1.3.3.</span> <span class="nav-text">ROC Curve</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#&#x5173;&#x4E8E;&#x8BC4;&#x4EF7;&#x6307;&#x6807;&#x9009;ROC-AUC&#x8FD8;&#x662F;Precision-Recall-Curve"><span class="nav-number">1.1.3.4.</span> <span class="nav-text">&amp;#x5173;&amp;#x4E8E;&amp;#x8BC4;&amp;#x4EF7;&amp;#x6307;&amp;#x6807;&amp;#x9009;ROC AUC&amp;#x8FD8;&amp;#x662F;Precision&#x2F;Recall Curve</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Multiclass-Classification"><span class="nav-number">1.2.</span> <span class="nav-text">Multiclass Classification</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#OvR-and-OvO-strategy"><span class="nav-number">1.2.1.</span> <span class="nav-text">OvR and OvO strategy</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#OvR"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">OvR</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#OvO"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">OvO</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#the-choice-between-OvR-and-OvO"><span class="nav-number">1.2.1.3.</span> <span class="nav-text">the choice between OvR and OvO</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Error-Analysis"><span class="nav-number">1.2.2.</span> <span class="nav-text">Error Analysis</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Multilabel-Classsification"><span class="nav-number">1.3.</span> <span class="nav-text">Multilabel Classsification</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Multioutput-Classification"><span class="nav-number">1.4.</span> <span class="nav-text">Multioutput Classification</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">PaoloWitty</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">PaoloWitty</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

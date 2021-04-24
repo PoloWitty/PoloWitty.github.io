@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Ensemble Learning ensemble: a group of predictors">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ensemble Learning">
+<meta property="og:url" content="http://example.com/handon-ml2/notebook-handon-ml2-Ensemble-Learning/index.html">
+<meta property="og:site_name" content="Paolo">
+<meta property="og:description" content="Ensemble Learning ensemble: a group of predictors">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-04-24T15:44:17.000Z">
+<meta property="article:modified_time" content="2021-04-24T15:51:56.683Z">
+<meta property="article:author" content="PaoloWitty">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/handon-ml2/notebook-handon-ml2-Ensemble-Learning/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Ensemble Learning | Paolo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Paolo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/handon-ml2/notebook-handon-ml2-Ensemble-Learning/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="PaoloWitty">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Paolo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Ensemble Learning
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-04-24 23:44:17 / 修改时间：23:51:56" itemprop="dateCreated datePublished" datetime="2021-04-24T23:44:17+08:00">2021-04-24</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/handon-ml2/" itemprop="url" rel="index"><span itemprop="name">handon-ml2</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Ensemble-Learning"><a href="#Ensemble-Learning" class="headerlink" title="Ensemble Learning"></a>Ensemble Learning</h1><blockquote>
+<p>ensemble: a group of predictors</p>
+</blockquote>
+<span id="more"></span>
+<h2 id="Voting-Classifiers"><a href="#Voting-Classifiers" class="headerlink" title="Voting Classifiers"></a>Voting Classifiers</h2><p>Even if each classifiers is a weak learner( meaning it does only slightly better than random guessing ), the ensemble can still be a strong learner( achieving high accuracy ), provided there are a sufficient number of weak learners and they are sufficiently diverse.</p>
+<blockquote>
+<p><strong>hard voting</strong>: aggregate the predictions of each classifier and predict the class that gets the most votes. The majority-vote classifier is called hard voting classifier. This requires the classifier are able to estimate the class. (which is suitable for all classifier).</p>
+<p><strong>soft voting</strong>: If all classifiers are able to estimate class probabilities(i.e., they all have a <em>predict_proba()</em> method), then you can tell Scikit-Learn to predict the class with the highest class probability, averaged over all the individual classifiers. Soft voting often achieves higher performance than hard voting.</p>
+</blockquote>
+<p><em><strong>Tip:</strong></em></p>
+<p>Ensemble method work best when the predictors are independent from one another as possible. One way to get diverse classifiers is to train them using very different algorithms. This increases the chance that they will make very different types of errors, improving the ensemble&#x2019;s accuracy.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> RandomForestClassifier</span><br><span class="line"><span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> VotingClassifier</span><br><span class="line"><span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> LogisticRegression</span><br><span class="line"><span class="keyword">from</span> sklearn.svm <span class="keyword">import</span> SVC</span><br><span class="line"></span><br><span class="line">log_clf=LogisticRegression(solver=<span class="string">&apos;lbfgs&apos;</span>)</span><br><span class="line">rnd_clf=RandomForestClassifier(n_estimators=<span class="number">100</span>)</span><br><span class="line">svm_clf=SVC(gamma=<span class="string">&apos;scale&apos;</span>)</span><br><span class="line"></span><br><span class="line">voting_clf=VotingClassifier(</span><br><span class="line">	estimators=[(<span class="string">&apos;lr&apos;</span>,log_clf),(<span class="string">&apos;rf&apos;</span>,rnd_clf),(<span class="string">&apos;svc&apos;</span>,svm_clf)],</span><br><span class="line">    voting=<span class="string">&apos;hard&apos;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">voting_clf.fit(X_train,y_train)</span><br></pre></td></tr></table></figure>
+
+<h2 id="Bagging-amp-Pasting"><a href="#Bagging-amp-Pasting" class="headerlink" title="Bagging &amp; Pasting"></a>Bagging &amp; Pasting</h2><p>Another approach to get a diverse set of classifiers is to use the same training algorithm for every predictor and train them on different random subsets for the training set.</p>
+<blockquote>
+<p><em><strong>bagging</strong></em>: when sampling is performed with replacement, this method is called bagging. (short for bootstrap aggregating)</p>
+<p><em><strong>pasting</strong></em>: when sampling is performed without replacement, it&#x2019;s called pasting.</p>
+<p>In other words, both bagging and pasting allow training instances to be sampled several times across multiple predictors, but only  bagging allows training instances to be sampled several times for the same predictor.</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> BaggingClassifier</span><br><span class="line"><span class="keyword">from</span> sklearn.tree <span class="keyword">import</span> DecisionTreeClassifier</span><br><span class="line"></span><br><span class="line">bag_clf=BaggingClassifier(</span><br><span class="line">	DecisionTreeClassifier(),n_estimators=<span class="number">500</span>,</span><br><span class="line">    max_samples=<span class="number">100</span>,bootstrap=<span class="literal">True</span>,n_jos=-<span class="number">1</span></span><br><span class="line">)<span class="comment"># train an ensemble of 500 Decision Tree classifiers, each is trained on 100 training instances randomly sampled from the training set with replacement, n_jobs parameters tells the number of CPU cores to use for training and predictions(-1 mean to use all available cores)</span></span><br><span class="line">bag_clf.fit(X_train,y_train)</span><br><span class="line">y_pred=bag_clf.predict(X_test)</span><br></pre></td></tr></table></figure>
+
+<p>In order to use pasting, just set <em>bootstrap=False</em>. But generally, the Bagging works better.</p>
+<h3 id="Out-of-Bag-Evaluation"><a href="#Out-of-Bag-Evaluation" class="headerlink" title="Out-of-Bag Evaluation"></a>Out-of-Bag Evaluation</h3><p>Some instances will not be sampled for even once. The rate of them are approximately 36.8%<br>$$<br>ratio=lim_{m\to\infty}(1-\frac1m)^m=\frac1e\approx0.368<br>$$<br>Those instances are called <em>out-of-bag</em> instances.</p>
+<p>Since a predictor never sees the oob instances during training, it can be evaluated on these instances, without the need for a separate validation set.</p>
+<p>just set <em>oob_score=True</em> when creating a <em>BaggingClassifier</em> to request an automatic oob evaluation after training. The resulting evaluation score is available through the <em>oob_score_</em> attribute.</p>
+<h3 id="Random-Patches-and-Random-Subspaces"><a href="#Random-Patches-and-Random-Subspaces" class="headerlink" title="Random Patches and Random Subspaces"></a>Random Patches and Random Subspaces</h3><p>You can also sampling the features by <em>max_features</em> and <em>bootstrap_features</em> (similar to <em>max_samples</em> and <em>bootstrap</em> , but for feature sampling instead of instance sampling )</p>
+<p>Sampling both instances and features is called the <strong>Random Patches</strong> method.</p>
+<p>Keeping all training instances but sampling features is called <strong>Random Subspaces</strong> method.</p>
+<p>Sampling feature will result in even more predictor diversity, trading a bit more bias for a lower variance.</p>
+<h3 id="Random-Forests"><a href="#Random-Forests" class="headerlink" title="Random Forests"></a>Random Forests</h3><p>A Random Forest is an ensemble of Decision Trees, generally trained via the bagging method ( or sometimes pasting ). So the parameters in it are the same as <em>BaggingClassifier</em> and <em>DecisionTreeClassifier</em> (while some parameters are fixed or gone)</p>
+<h4 id="Feature-Importance"><a href="#Feature-Importance" class="headerlink" title="Feature Importance"></a>Feature Importance</h4><p>Scikit-Learn measures a feature&#x2019;s importance by looking at how much the tree nodes that use that features reduce impurity on average (across all trees in the forest ). More precisely, it is a weighted average, where each node&#x2019;s weight is equal to the number of training samples that are associated with it.</p>
+<p>You can access the importances using the <em>feature_importances_</em> attribute. </p>
+<h2 id="Boosting"><a href="#Boosting" class="headerlink" title="Boosting"></a>Boosting</h2><blockquote>
+<p>originally called <em>hypothesis boosting</em>, it refers to any Ensemble method that can combine several weak learners into a strong learner.</p>
+</blockquote>
+<h3 id="AdaBoost"><a href="#AdaBoost" class="headerlink" title="AdaBoost"></a>AdaBoost</h3><blockquote>
+<p>short for Adaptive Boosting</p>
+</blockquote>
+<p>The algorithm will increase the relative weight of misclassified training instances after training a classifier.</p>
+<p>There is one important drawback to the sequential learning technique: it cannot be parallelized ( or only partially ). As a result, it does not scale as well as bagging or pasting.</p>
+<p>Each instance weight $\mathbf w^{(i)}$ is initially set to $\frac1m$ . A first predictor is trained, and its weighted error rate $\mathbf r_1$ is computed on the training set:<br>$$<br>r_j=\frac{\sum^m_{i=1,\hat y <em>j^{(i)}\neq y^{(i)}} w^{(i)}}{\sum^m</em>{i=1}w^{(i)}}<br>$$<br>The predictor&#x2019;s weight $\alpha_j$ is then computed as below, where $\eta$ is the learning rate. If it is just guessing randomly, then its weight will be close to zero. However, if it&#x2019;s most often wrong, then its weight will be negative.<br>$$<br>\alpha_j=\eta \log\frac{1-r_j}{r_j}<br>$$<br>Then update the weight:<br>$$<br>for\quad i = 1,2,\cdots,m\<br>w^{(i)}\leftarrow\begin{cases}w^{(i)}&amp; if\quad\hat y_j^{(i)}=y^{(i)}\<br>w^{(i)}exp(\alpha_j) &amp; if\quad \hat y_j^{(i)}\neq y^{(i)}<br>\end{cases}<br>$$<br>Then all the instance weights are normalized (i.e., divided by $\sum^m_{i=1}w^{(i)}$)</p>
+<p>To make prediction:<br>$$<br>\hat y(x)=argmax_k \sum^N_{j=1\\hat y_j(x)=k}\alpha_j<br>$$<br>the $N$ is the number of predictor</p>
+<p>Scikit-Learn uses a multi-class version of AdaBoost called SAMME. If the predictors can estimate class probabilities, Scikit-Learn can use a variant of SAMME called <em>SAMME.R</em> ( the R stands for &#x201C;Real&#x201D; )</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> AdaBoostClassifier</span><br><span class="line"></span><br><span class="line">ada_clf=AdaBoostClassifier(</span><br><span class="line">	DecisionTreeClassifier(max_depth=<span class="number">1</span>),n_estimators=<span class="number">200</span>,</span><br><span class="line">    algorithm=<span class="string">&apos;SAMME.R&apos;</span>,learning_rate=<span class="number">0.5</span></span><br><span class="line">)</span><br><span class="line">ada_clf.fit(X_train,y_train)</span><br></pre></td></tr></table></figure>
+
+<p>Specially, the Decision Tree with only one depth is called  Decision Stump.</p>
+<h3 id="Gradient-Boosting"><a href="#Gradient-Boosting" class="headerlink" title="Gradient Boosting"></a>Gradient Boosting</h3><p>This method tries to fit the new predictor to the residual errors made by the previous predictor.</p>
+<blockquote>
+<p>GBRT: Gradient Boosted Regression Trees</p>
+</blockquote>
+<p>The ensemble make predictions on a new instance simply by adding up the predictions of all the trees.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> GradientBoostingRegressor</span><br><span class="line">gbrt=GradientBoostingRegressor(max_depth=<span class="number">3</span>,n_estimators=<span class="number">30</span>,learing_rate=<span class="number">0.5</span>)<span class="comment"># the learning_rate scales the contribution of each tree. If you set it to a low value, you will need more trees in the ensemble to fit the training set, but the predictions will usually generalize better</span></span><br><span class="line">gbrt.fit(X,y)</span><br></pre></td></tr></table></figure>
+
+<h4 id="early-stopping"><a href="#early-stopping" class="headerlink" title="early stopping"></a>early stopping</h4><p>just to find the optimal number of trees</p>
+<p>A simple way to implement this is to use the <em>staged_predict()</em> method: it return an iterator over the predictions made by the ensemble at each stage of training ( with one tree, two trees, etc. ) </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> mean_squared_error</span><br><span class="line">errors=[mean_squared_error(y_val,y_pred) </span><br><span class="line">        	<span class="keyword">for</span> y_pred <span class="keyword">in</span> gbrt.staged_predict(X_val)]</span><br><span class="line">bst_n_estimators=np.argmin(errors)+<span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>However, this is implemented by training a large number of trees first and then looking back to find the optimal number. In order to  actually stopping training early, you can do this by setting <em>warm_start=True</em>.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">gbrt=GradientBoostingRegressor(max_depth=<span class="number">2</span>,warm_start=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">min_val_error=<span class="built_in">float</span>(<span class="string">&apos;inf&apos;</span>)</span><br><span class="line">error_going_up=<span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> n_estimators <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">120</span>):</span><br><span class="line">    gbrt.n_estimators=n_estimators</span><br><span class="line">    gbrt.fit(X_train,y_train)</span><br><span class="line">    y_pred=gbrt.predict(X_val)</span><br><span class="line">    val_error=mean_squared_error(y_val,y_pred)</span><br><span class="line">    <span class="keyword">if</span> val_error&lt;min_val_error:</span><br><span class="line">        min_val_error=val_error</span><br><span class="line">        error_going_up=<span class="number">0</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        error_going_up+=<span class="number">1</span></span><br><span class="line">        <span class="keyword">if</span> error_going_up==<span class="number">5</span>:</span><br><span class="line">            <span class="keyword">break</span> <span class="comment">#early stopping</span></span><br></pre></td></tr></table></figure>
+
+<p><em><strong>Implement Note</strong></em></p>
+<p>It&#x2019;s much more easier to use another optimized implementation of Gradient Boosting: <strong>XGBoost</strong> library. </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> xgboost</span><br><span class="line">xgb_reg=xgboost.XGBRegressor()</span><br><span class="line">xgb_reg.fit(X_train,y_train,</span><br><span class="line">           	eval_set=[(X_val,y_val)],early_stopping_rounds=<span class="number">3</span>)<span class="comment"># so there is no need to hand writing the early stopping</span></span><br><span class="line">y_pred=xgb_reg.predict(X_val)</span><br></pre></td></tr></table></figure>
+
+<h2 id="Stacking"><a href="#Stacking" class="headerlink" title="Stacking"></a>Stacking</h2><blockquote>
+<p>short for <em>stacked generalization</em> </p>
+</blockquote>
+<p>Base idea: train a model to perform the aggregation for us ( instead of the hard voting and so on ).</p>
+<p>The final predictor is called <em>blender</em>, or a <em>meta learner</em>.</p>
+<p>To train the blender, </p>
+<ol>
+<li>split the training set into two subsets, the first subset is used to train the predictors in the first layer</li>
+<li>the trained predictors are used to make predictions on the second( held-out ) set. The predictions are used as the new training set, and keeping the target values. The blender is trained on this new training set.</li>
+</ol>
+<p><strong>A python package for the stacking and other ensemble learning can be <em>brew</em>.</strong></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/handon-ml2/notebook-handon-ml2-Regression/" rel="prev" title="Regression">
+      <i class="fa fa-chevron-left"></i> Regression
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/handon-ml2/notebook-handon-ml2-Dimensionality-Reduction/" rel="next" title="Dimensionality Reductioin">
+      Dimensionality Reductioin <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Ensemble-Learning"><span class="nav-number">1.</span> <span class="nav-text">Ensemble Learning</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Voting-Classifiers"><span class="nav-number">1.1.</span> <span class="nav-text">Voting Classifiers</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Bagging-amp-Pasting"><span class="nav-number">1.2.</span> <span class="nav-text">Bagging &amp; Pasting</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Out-of-Bag-Evaluation"><span class="nav-number">1.2.1.</span> <span class="nav-text">Out-of-Bag Evaluation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Random-Patches-and-Random-Subspaces"><span class="nav-number">1.2.2.</span> <span class="nav-text">Random Patches and Random Subspaces</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Random-Forests"><span class="nav-number">1.2.3.</span> <span class="nav-text">Random Forests</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Feature-Importance"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">Feature Importance</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Boosting"><span class="nav-number">1.3.</span> <span class="nav-text">Boosting</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#AdaBoost"><span class="nav-number">1.3.1.</span> <span class="nav-text">AdaBoost</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Gradient-Boosting"><span class="nav-number">1.3.2.</span> <span class="nav-text">Gradient Boosting</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#early-stopping"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">early stopping</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Stacking"><span class="nav-number">1.4.</span> <span class="nav-text">Stacking</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">PaoloWitty</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">PaoloWitty</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

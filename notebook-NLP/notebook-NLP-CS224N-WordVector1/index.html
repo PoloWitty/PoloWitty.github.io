@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Words RepresentationOne-hot vectorDenotational semantics: The concept of representing an idea as a symbol( a word or a one-hot vector). It is sparse and cannot capture similarity.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="WordVector1">
+<meta property="og:url" content="http://example.com/notebook-NLP/notebook-NLP-CS224N-WordVector1/index.html">
+<meta property="og:site_name" content="Paolo">
+<meta property="og:description" content="Words RepresentationOne-hot vectorDenotational semantics: The concept of representing an idea as a symbol( a word or a one-hot vector). It is sparse and cannot capture similarity.">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/notebook-NLP/notebook-NLP-CS224N-WordVector1/notebook-NLP/notebook-NLP-CS224N-WordVector1/image-20210320143717173.png">
+<meta property="article:published_time" content="2021-04-24T14:11:15.000Z">
+<meta property="article:modified_time" content="2021-04-24T15:47:46.400Z">
+<meta property="article:author" content="PaoloWitty">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/notebook-NLP/notebook-NLP-CS224N-WordVector1/notebook-NLP/notebook-NLP-CS224N-WordVector1/image-20210320143717173.png">
+
+<link rel="canonical" href="http://example.com/notebook-NLP/notebook-NLP-CS224N-WordVector1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>WordVector1 | Paolo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Paolo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/notebook-NLP/notebook-NLP-CS224N-WordVector1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="PaoloWitty">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Paolo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          WordVector1
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-04-24 22:11:15 / 修改时间：23:47:46" itemprop="dateCreated datePublished" datetime="2021-04-24T22:11:15+08:00">2021-04-24</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/notebook-NLP/" itemprop="url" rel="index"><span itemprop="name">notebook - NLP</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Words-Representation"><a href="#Words-Representation" class="headerlink" title="Words Representation"></a>Words Representation</h1><h2 id="One-hot-vector"><a href="#One-hot-vector" class="headerlink" title="One-hot vector"></a><strong>One-hot</strong> vector</h2><p><strong>Denotational semantics:</strong> The concept of representing an idea as a symbol( a word or a one-hot vector). It is sparse and cannot capture similarity.</p>
+<span id="more"></span>
+<h2 id="SVD-Based-Methods"><a href="#SVD-Based-Methods" class="headerlink" title="SVD Based Methods"></a>SVD Based Methods</h2><ol>
+<li>Loop over a massive dataset and accumulate word co-occurrence counts in some form of a matrix X</li>
+<li>Perform SVD on X to get a $USV^T$ decomposition</li>
+<li>Use the row of $U$ as the word embeddings for all words in our dictionary</li>
+</ol>
+<p><em><strong>The following are a few choices of X</strong></em></p>
+<h3 id="Word-Document-Matrix"><a href="#Word-Document-Matrix" class="headerlink" title="Word-Document Matrix"></a>Word-Document Matrix</h3><blockquote>
+<p>Distributional semantics: The concept of representing the meaning of a word based on the context in which it usually appears.</p>
+</blockquote>
+<h4 id="Basic-conjecture"><a href="#Basic-conjecture" class="headerlink" title="Basic conjecture:"></a>Basic conjecture:</h4><p>words that are related will often appear in the same documents</p>
+<h4 id="Building-manner"><a href="#Building-manner" class="headerlink" title="Building manner:"></a>Building manner:</h4><ul>
+<li>Loop over billions of documents and for each time word <code>i</code> appears in document <code>j</code>, we add one to entry $X_{ij}$. </li>
+</ul>
+<h4 id="shortage"><a href="#shortage" class="headerlink" title="shortage"></a>shortage</h4><ul>
+<li>the matrix is very large  ( $\R^{|V|\times M }$)</li>
+<li>it scales with the number of documents ( $M$ ) </li>
+</ul>
+<h3 id="Window-based-Co-occurrence-Matrix"><a href="#Window-based-Co-occurrence-Matrix" class="headerlink" title="Window based Co-occurrence Matrix"></a>Window based Co-occurrence Matrix</h3><p>similar to Word-Document Matrix</p>
+<h4 id="Building-manner-1"><a href="#Building-manner-1" class="headerlink" title="Building manner"></a>Building manner</h4><ul>
+<li>the matrix $X$ stores co-occurrences of words, so it&#x2019;s an affinity matrix</li>
+<li>count the number of times each word appears inside a window of a particular size around the word of interest</li>
+<li>calculate this count for all the words in corpus </li>
+</ul>
+<h3 id="Applying-PCA-to-the-co-occurrence-matrix"><a href="#Applying-PCA-to-the-co-occurrence-matrix" class="headerlink" title="Applying PCA to the co-occurrence matrix"></a>Applying PCA to the co-occurrence matrix</h3><p>No more to say than PCA</p>
+<p>but the problems have to be mentioned</p>
+<h4 id="Goodness"><a href="#Goodness" class="headerlink" title="Goodness"></a>Goodness</h4><p>make an efficient use of the statistics</p>
+<h4 id="Shortage"><a href="#Shortage" class="headerlink" title="Shortage"></a>Shortage</h4><ul>
+<li>The dimensions of the matrix change very often( new words are added very frequently)</li>
+<li>The matrix is extremely sparse since most words do not co-occur</li>
+<li>The matrix is very high dimensional in general( the size of the vocabulary is large )</li>
+<li>The imbalance in word frequency is drastic</li>
+</ul>
+<h4 id="Some-solutions"><a href="#Some-solutions" class="headerlink" title="Some solutions"></a>Some solutions</h4><ul>
+<li>Ignore function words(&#x505C;&#x7528;&#x8BCD;)</li>
+<li>Apply a ramp window ( i.e. weight the co-occurrence count based on distance between the words in the document )</li>
+<li>Use Pearson correlation and set negative counts to 0 instead of using just raw count</li>
+</ul>
+<h2 id="Iteration-Based-Methods-Word2vec"><a href="#Iteration-Based-Methods-Word2vec" class="headerlink" title="Iteration Based Methods - Word2vec"></a>Iteration Based Methods - Word2vec</h2><h4 id="Basic-idea"><a href="#Basic-idea" class="headerlink" title="Basic idea"></a>Basic idea</h4><ol>
+<li>design a model whose parameters are the word vectors</li>
+<li>train the model on a certain objective</li>
+</ol>
+<p>other idea are just the same as <em>backpropagating</em>, in each iteration, forward propagating, evaluate the errors, update the parameters by penalizing the error  parameters.</p>
+<blockquote>
+<p>Iteration based methods capture co-occurrence of words one at a time instead of capturing all co-occurrence counts directly.</p>
+</blockquote>
+<h4 id="Basic-conjecture-1"><a href="#Basic-conjecture-1" class="headerlink" title="Basic conjecture"></a>Basic conjecture</h4><p>This model based on the hypothesis that the similar words have similar context.</p>
+<h4 id="What-is-Word2vec"><a href="#What-is-Word2vec" class="headerlink" title="What is Word2vec"></a>What is Word2vec</h4><p>Word2vec is actually a software package that includes:</p>
+<ul>
+<li>2 algorithms:<ul>
+<li>CBOW: predict a center word from the surrounding context in terms of word vectors</li>
+<li>skip-gram: predict the <em>distribution</em> ( probability ) of context words from a center word</li>
+</ul>
+</li>
+<li>2 training methods<ul>
+<li>negative sampling: define an objective by sampling negative examples</li>
+<li>hierarchical softmax: define an objective using an efficient tree structure to compute probabilities for all the vocabulary</li>
+</ul>
+</li>
+</ul>
+<h3 id="Language-Models-Unigrams-Bigrams-etc"><a href="#Language-Models-Unigrams-Bigrams-etc" class="headerlink" title="Language Models(Unigrams, Bigrams,etc.)"></a>Language Models(Unigrams, Bigrams,etc.)</h3><h4 id="Unigram-model"><a href="#Unigram-model" class="headerlink" title="Unigram model"></a>Unigram model</h4><p>take the unary language model approach and break apart this probability by assuming the word occurrences are completely independent<br>$$<br>P(w_1,w_2,\cdots,w_n)=\prod_{i=1}^nP(w_i)<br>$$</p>
+<h5 id="Shortage-1"><a href="#Shortage-1" class="headerlink" title="Shortage"></a>Shortage</h5><p>We know that next word is highly contingent upon the previous sequence of words.</p>
+<h4 id="Bigram-model"><a href="#Bigram-model" class="headerlink" title="Bigram model"></a>Bigram model</h4><p>let the probability of the sequence depend on the pairwise probability of a word in the sequence and the word next to it.<br>$$<br>P(w_1,w_2,\cdots,w_n)=\prod_{i=2}^nP(w_i|w_{i-1})<br>$$</p>
+<h3 id="CBOW-Continuous-Bag-of-Words-Model"><a href="#CBOW-Continuous-Bag-of-Words-Model" class="headerlink" title="CBOW ( Continuous Bag of Words Model )"></a>CBOW ( Continuous Bag of Words Model )</h3><p>For each word, we want to learn 2 vectors:</p>
+<ul>
+<li>$v$ : (input vector) when the word is in the context</li>
+<li>$u$ : (output vector) when the word is in the center</li>
+</ul>
+<h4 id="Parameters"><a href="#Parameters" class="headerlink" title="Parameters"></a>Parameters</h4><ul>
+<li><p>Known parameters:</p>
+<ul>
+<li>$x^{(c)}$ : the input sentence represented by one-hot word vectors or context</li>
+<li>$y^{(c)}$ : the output ( since we only have one output, so we just call this $y$ which is the one-hot vector of the known center word )</li>
+</ul>
+</li>
+<li><p>Unknown parameters:</p>
+<ul>
+<li>$n$ : an arbitrary size which defines the size of our embedding space</li>
+<li>$\mathcal V$ : ( $\in \R^{n\times|V|}$) the input word matrix such that the $i$-th column of $\mathcal V$ is the n-dimensional embedded vector for word $w_i$ when it is an input of the model. We denote this $n\times 1$ vector as $v_i$</li>
+<li>$\mathcal U$ : ( $\in\R^{|V|\times n}$) the output word matrix such that the $j$-th row of $ \mathcal U$ is an n-dimensional embedded vector for word $w_j$ when it is an output of the model. We denote the row of $ \mathcal U$ as $u_j$. </li>
+</ul>
+</li>
+</ul>
+<h4 id="Steps"><a href="#Steps" class="headerlink" title="Steps"></a>Steps</h4><ol>
+<li>We generate our one hot word vectors for the input context of size m : $(x^{(c-m)},\cdots, x^{(c-1)}, x^{(c+1)},\cdots, x^{(c+m)})$ ( $ \text{each vector }x\in\R^{|V|}$) ( random initialization )</li>
+<li>We get our embedded word vectors for the context $(v_{c-m}=\mathcal Vx^{(c-m)},v_{c-m+1}=\mathcal Vx^{(c-m+1)},\cdots,v_{c+m}=\mathcal Vx^{(c+m)})$ ( each vector $v \in \R^n$ )</li>
+<li>Average these vectors to get $\hat v = \frac{v_{c-m}+v_{c-m+1}+\cdots+v_{c+m}}{2m} \in \R^n$ </li>
+<li>Generate a score vector $z=\mathcal U\hat v \in \R^{|V|}$. As the dot product of similar vectors is higher, it will push similar words close to each other in order to achieve a high score</li>
+<li>Turn the scores into probabilities $\hat y = softmax(z) \in \R^{|V|}$ </li>
+<li>We desire our probabilities generated, $\hat y$ , to match the true probabilities, y , which also happens to be the one hot vector of the actual word</li>
+</ol>
+<h4 id="Train-Method"><a href="#Train-Method" class="headerlink" title="Train Method"></a>Train Method</h4><ul>
+<li>Loss function: cross entropy</li>
+<li>optimize method : SGD</li>
+</ul>
+<p>And since the activate function is $softmax$ , so the target is :<br>$$<br>\begin{aligned}<br>\text{minimize }J &amp; =-logP(w_c|w_{c-m},\cdots,w_{c-1},w_{c+1},\cdots,w_{c+m})\<br>&amp; = -logP(u_c|\hat v)\<br>&amp; = -log\frac{exp(u^T_c\hat v)}{\sum^{|V|}<em>{j=1}exp(u_j^T\hat v)}\<br>&amp; = -u^T_c\hat v + log\sum^{|V|}</em>{j=1}exp(u_j^T\hat v)<br>\end{aligned}<br>$$</p>
+<h3 id="Skip-Gram-Model"><a href="#Skip-Gram-Model" class="headerlink" title="Skip-Gram Model"></a>Skip-Gram Model</h3><h4 id="Parameters-1"><a href="#Parameters-1" class="headerlink" title="Parameters"></a>Parameters</h4><ul>
+<li>input: one hot vector (center word), represented by $x$ (since there is only one)</li>
+<li>output: $y^{(j)}$</li>
+<li>$\mathcal V$ and $\mathcal U$ are the same as in CBOW</li>
+</ul>
+<h4 id="Steps-1"><a href="#Steps-1" class="headerlink" title="Steps"></a>Steps</h4><ol>
+<li>We generate our one hot input vector $x\in \R^{|V|}$ of the center word</li>
+<li>We get our embedded word vector for the center word $v_c=\mathcal Vx\in \R^n$</li>
+<li>Generate a score vector $z=\mathcal Uv_c$</li>
+<li>Turn the score vector into probabilities, $\hat y = softmax(z)$. Note that $\hat y_{c-m},\cdots,\hat y_{c-1},\hat y_{c+1},\cdots,\hat y_{c+m}$ are the probabilities of observing each context word</li>
+<li>We desire our probability vector generated to match the true probabilities which is $y^{(c-m)},\cdots,y^{(c-1)},y^{(c+1)},\cdots,y^{(c+m)}$, the one hot vectors of the actual output</li>
+</ol>
+<h4 id="Train-Method-1"><a href="#Train-Method-1" class="headerlink" title="Train Method"></a>Train Method</h4><ul>
+<li>Optimize method: SGD</li>
+<li>Loss function: cross entropy</li>
+</ul>
+<p>We invoke a Naive Bayes assumption to break out the probabilities. So our objective function became:<br>$$<br>\begin{aligned}<br>\text{minimize }J &amp;= -log P(w_{c-m},\cdots,w_{c-1},w_{c+1},\cdots,w_{c+m}|w_c)\<br>&amp;= -log \prod^{2m}<em>{j=0,j\neq m}P(w</em>{c-m+j}|w_c)\<br>&amp;= -log \prod^{2m}<em>{j=0,j\neq m}P(y</em>{c-m+j}|v_c)\<br>&amp;= -log \prod^{2m}<em>{j=0,j\neq m}\frac{exp(u^T</em>{c-m+j}v_c)}{\sum^{|V|}<em>{k=1}exp(u_k^tv_c)}\<br>&amp;= - \sum^{2m}</em>{j=0,j\neq m}u^T_{c-m+j}+2mlog\sum^{|V|}_{k=1}exp(u_k^Tv_c)<br>\end{aligned}<br>$$</p>
+<h3 id="Negative-Sampling"><a href="#Negative-Sampling" class="headerlink" title="Negative Sampling"></a>Negative Sampling</h3><p>It&#x2019;s costly to compute the loss for the CBOW and Skip-Gram, because of the vocabulary size ( $|V|$ ) is large.</p>
+<p>For every training step, instead of looping over the entire vocabulary, we can just sample several negative examples. We sample from a noise distribution ( $P_n(w)$ ) whose probabilities match the ordering of the frequency of the vocabulary. To augment our formulation of the problem to incorporate Negative Sampling, all we need to do is to update the :</p>
+<ul>
+<li>objective function</li>
+<li>gradients</li>
+<li>update rules</li>
+</ul>
+<h4 id="Denote"><a href="#Denote" class="headerlink" title="Denote"></a>Denote</h4><p>Consider a pair $(w,c)$ of word  and context.</p>
+<ul>
+<li>$P(D=1|w,c)$ : the probability that $(w,c)$ came from the corpus data ( i.e., they are actually the right pair)</li>
+<li>$P(D=0|w,c)$ : the probability that $(w,c)$ did not come from the corpus data ( i.e., they are the wrong pair )</li>
+</ul>
+<h4 id="Train-Method-2"><a href="#Train-Method-2" class="headerlink" title="Train Method"></a>Train Method</h4><p>the probability now become:<br>$$<br>P(D=1|w,c,\theta)= \sigma(v_c^Tv_w)=\frac1{1+e^{(-v_c^Tv_w)}}<br>$$<br>here we take $\theta$ to be the parameters of the model, and in our case it&#x2019;s $\mathcal V$ and $\mathcal U$</p>
+<p>So the objective function&#x2019;s target became to maximize the probability of $TP\times TN$ ( the meaning from co-occurrence matrix )<br>$$<br>\begin{aligned}<br>\theta &amp;= \mathop{\arg\max}<em>\theta\prod</em>{(w,c)\in D}P(D=1|w,c,\theta)\prod_{(w,c)\in \tilde D}P(D=0|w,c,\theta)\<br>&amp;= \mathop{\arg\max}<em>\theta\prod</em>{(w,c)\in D}P(D=1|w,c,\theta)\prod_{(w,c)\in \tilde D}(1-P(D=1|w,c,\theta))\<br>&amp;= \mathop{\arg\max}<em>\theta\sum</em>{(w,c)\in D}logP(D=1|w,c,\theta)+\sum_{(w,c)\in \tilde D}log(1-P(D=1|w,c,\theta))\<br>&amp;= \mathop{\arg\max}<em>\theta\sum</em>{(w,c)\in D}log\frac1{1+exp(-u_w^tv_c)}+\sum_{(w,c)\in \tilde D}log(1-\frac1{1+exp(-u_w^Tv_c)})\<br>&amp;= \mathop{\arg\max}<em>\theta\sum</em>{(w,c)\in D}log\frac1{1+exp(-u_w^Tv_c)}+\sum_{(w,c)\in \tilde D}log(\frac1{1+exp(u_w^Tv_c)})\<br>&amp;= \mathop{\arg\min}<em>\theta\sum</em>{(w,c)\in D}-log\frac1{1+exp(-u_w^Tv_c)}-\sum_{(w,c)\in \tilde D}log\frac1{1+exp(u_w^Tv_c)}<br>\end{aligned}<br>$$<br>$\tilde D$ is a &#x201C;false&#x201D; or &#x201C;negative&#x201D; corpus, where we would have sentences like &#x201C;stock boil fish is toy&#x201D;. They are unnatural sentences that should get a low probability of ever occurring. We can generate $\tilde D$ on the fly by randomly sampling this negative from the word bank.</p>
+<h5 id="For-CBOW"><a href="#For-CBOW" class="headerlink" title="For CBOW"></a>For CBOW</h5><p>our new objective function for observing the center word $u_c$ given the context vector $\hat v=\frac{v_{c-m}+v_{c-m+1}+\cdots+v_{c+m}}{2m}$ would be :<br>$$<br>-\log\sigma(u_c^T\hat v)-\sum^K_{k=1}\log\sigma(-\tilde u_k^T\hat v)<br>$$</p>
+<h5 id="For-skip-gram"><a href="#For-skip-gram" class="headerlink" title="For skip-gram"></a>For skip-gram</h5><p>our new objective function for observing the context word $c-m+j$ given the center word $c$ would be:<br>$$<br>-\log\sigma(u_{c-m+j}^Tv_c)-\sum^K_{k=1}\log\sigma(-\tilde u_k^Tv_c)<br>$$<br>${\tilde u_k|k=1\cdots K}$ are sampled from $P_n(w)$.  ( Possion distribution )</p>
+<h5 id="Tiny-trick"><a href="#Tiny-trick" class="headerlink" title="Tiny trick"></a>Tiny trick</h5><p>While there is much discussion of what makes the best approximation for the choice of $P_n(w)$ , what seems to work best is the Unigram Model raised to the power of $\frac34$ .</p>
+<h3 id="Hierarchical-Softmax"><a href="#Hierarchical-Softmax" class="headerlink" title="Hierarchical Softmax"></a>Hierarchical Softmax</h3><p>In practice, hierarchical softmax tends to be better for infrequent words, while negative sampling tends to be better for frequent words and lower dimensional vectors.</p>
+<h4 id="Core-idea"><a href="#Core-idea" class="headerlink" title="Core idea"></a>Core idea</h4><p>Hierarchical softmax uses a binary tree to represent all words in the vocabulary. Each leaf of the tree is a word, and there is a unique path from root to leaf. In this model, there is <strong>no output representation for word</strong>. Instead, each node of the graph(except the root and the leaves) is associated to a vector that the model is going to learn.</p>
+<p>In this model, the probability of a word $w$ given a vector $w_i$, $P(w|w_i)$, is equal to the probability of a random walk starting in the root and ending in the leaf node corresponding to $w$. </p>
+<h4 id="Notation"><a href="#Notation" class="headerlink" title="Notation"></a>Notation</h4><ul>
+<li>$L(w)$ : the number of nodes in the path from the root to the leaf $w$. ( the root included and the leaf $w$ excluded )</li>
+<li>$n(w,i)$ : the $i$-th node on this path with associated vector $v_n(w,i)$ (<code>i</code> start from 1)</li>
+<li>$ch(n)$ : for each inner node $n$, we arbitrarily choose one of its children and call it $ch(n)$ (e.g. always the left node)</li>
+</ul>
+<h4 id="Train-method"><a href="#Train-method" class="headerlink" title="Train method"></a>Train method</h4><p>$$<br>P(w|w_i)=\prod^{L(w)-1}<em>{j=1}\sigma([n(w,j+1)=ch(n(w,j))]\cdot v</em>{n(w,j)}^Tv_{w_i})\<br>\text{where }<br>[x]=<br>\begin{cases}<br>1&amp;\text{if } x \text{ is true}\<br>-1&amp;\text{otherwise}<br>\end{cases}<br>$$</p>
+<p><em><strong>explanation</strong></em></p>
+<ul>
+<li><p>$\prod$ : compute the product of terms based on the shape of the path from the root $n(w,1)$ to the leaf $w$.</p>
+</li>
+<li><p>$[n(w,j+1)=ch(n(w,j))]$ : If we assume $ch(n)$ is always the left node of $n$, then this  term will returns 1 when the path goes left, and -1 if right. Furthermore, this term provides normalization. At a node $n$, if we sum the probabilities for going to the left and right node, we can check that for any value of $v_n^Tv_{w_i}$, $\sigma(v_n^Tv_{w_i})+\sigma(-v_n^Tv_{w_i})=1$( recall the graph of the sigmoid function ). The normalization also ensures that $\sum^{|V|}_{w=1}P(w|w_i)=1$, just as in the original softmax.</p>
+</li>
+<li><p>$v_{n(w,j)}^Tv_{w_i}$ : compare the similarity of our input vector $v_{w_i}$ to each inner node vector $v^T_{n(w,j)}$ using a dot product.</p>
+</li>
+</ul>
+<p><em><strong>example</strong></em></p>
+<p><img src="/notebook-NLP/notebook-NLP-CS224N-WordVector1/notebook-NLP/notebook-NLP-CS224N-WordVector1/image-20210320143717173.png" alt="image-20210320143717173"></p>
+<p>Taking $w_2$ for example, we must take two left edges and then a right edge to reach $w_2$ from the root, so<br>$$<br>\begin{aligned}<br>P(w_2|w_i)&amp;=p(n(w_2,1),left)\cdot p(n(w_2,2),left)\cdot p(n(w_2,3),right)\<br>&amp;= \sigma(v^T_{n(w_2,1)}v_{w_i})\cdot \sigma(v^T_{n(w_2,2)}v_{w_i})\cdot \sigma(-v^T_{n(w_2,3)}v_{w_i})<br>\end{aligned}<br>$$<br><em><strong>More details</strong></em></p>
+<p>train objective: </p>
+<p>our goal is still to minimize the negative log likelihood $-\log P(w|w_i)$.But instead of updating output vectors  per word. we update the vectors of the nodes in the binary tree that are in the path from root to leaf node.</p>
+<p>speed of training:</p>
+<p>determined by the way in which the binary tree is constructed and words are assigned to leaf nodes. Mikolov ( who invented the Hierarchical Softmax algorithm ) use a binary Huffman tree, which assigns frequent words shorter path in the tree.</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/test/hello-world/" rel="prev" title="Hello World">
+      <i class="fa fa-chevron-left"></i> Hello World
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/handon-ml2/notebook-handon-ml2-%E6%95%B0%E6%8D%AE%E9%9B%86/" rel="next" title="数据集">
+      数据集 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Words-Representation"><span class="nav-number">1.</span> <span class="nav-text">Words Representation</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#One-hot-vector"><span class="nav-number">1.1.</span> <span class="nav-text">One-hot vector</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SVD-Based-Methods"><span class="nav-number">1.2.</span> <span class="nav-text">SVD Based Methods</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Word-Document-Matrix"><span class="nav-number">1.2.1.</span> <span class="nav-text">Word-Document Matrix</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Basic-conjecture"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">Basic conjecture:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Building-manner"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">Building manner:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#shortage"><span class="nav-number">1.2.1.3.</span> <span class="nav-text">shortage</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Window-based-Co-occurrence-Matrix"><span class="nav-number">1.2.2.</span> <span class="nav-text">Window based Co-occurrence Matrix</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Building-manner-1"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">Building manner</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Applying-PCA-to-the-co-occurrence-matrix"><span class="nav-number">1.2.3.</span> <span class="nav-text">Applying PCA to the co-occurrence matrix</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Goodness"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">Goodness</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Shortage"><span class="nav-number">1.2.3.2.</span> <span class="nav-text">Shortage</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Some-solutions"><span class="nav-number">1.2.3.3.</span> <span class="nav-text">Some solutions</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Iteration-Based-Methods-Word2vec"><span class="nav-number">1.3.</span> <span class="nav-text">Iteration Based Methods - Word2vec</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Basic-idea"><span class="nav-number">1.3.0.1.</span> <span class="nav-text">Basic idea</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Basic-conjecture-1"><span class="nav-number">1.3.0.2.</span> <span class="nav-text">Basic conjecture</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#What-is-Word2vec"><span class="nav-number">1.3.0.3.</span> <span class="nav-text">What is Word2vec</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Language-Models-Unigrams-Bigrams-etc"><span class="nav-number">1.3.1.</span> <span class="nav-text">Language Models(Unigrams, Bigrams,etc.)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Unigram-model"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">Unigram model</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Shortage-1"><span class="nav-number">1.3.1.1.1.</span> <span class="nav-text">Shortage</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Bigram-model"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">Bigram model</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CBOW-Continuous-Bag-of-Words-Model"><span class="nav-number">1.3.2.</span> <span class="nav-text">CBOW ( Continuous Bag of Words Model )</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Parameters"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">Parameters</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Steps"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">Steps</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Train-Method"><span class="nav-number">1.3.2.3.</span> <span class="nav-text">Train Method</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Skip-Gram-Model"><span class="nav-number">1.3.3.</span> <span class="nav-text">Skip-Gram Model</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Parameters-1"><span class="nav-number">1.3.3.1.</span> <span class="nav-text">Parameters</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Steps-1"><span class="nav-number">1.3.3.2.</span> <span class="nav-text">Steps</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Train-Method-1"><span class="nav-number">1.3.3.3.</span> <span class="nav-text">Train Method</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Negative-Sampling"><span class="nav-number">1.3.4.</span> <span class="nav-text">Negative Sampling</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Denote"><span class="nav-number">1.3.4.1.</span> <span class="nav-text">Denote</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Train-Method-2"><span class="nav-number">1.3.4.2.</span> <span class="nav-text">Train Method</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#For-CBOW"><span class="nav-number">1.3.4.2.1.</span> <span class="nav-text">For CBOW</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#For-skip-gram"><span class="nav-number">1.3.4.2.2.</span> <span class="nav-text">For skip-gram</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Tiny-trick"><span class="nav-number">1.3.4.2.3.</span> <span class="nav-text">Tiny trick</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hierarchical-Softmax"><span class="nav-number">1.3.5.</span> <span class="nav-text">Hierarchical Softmax</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Core-idea"><span class="nav-number">1.3.5.1.</span> <span class="nav-text">Core idea</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Notation"><span class="nav-number">1.3.5.2.</span> <span class="nav-text">Notation</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Train-method"><span class="nav-number">1.3.5.3.</span> <span class="nav-text">Train method</span></a></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">PaoloWitty</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">PaoloWitty</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>
